@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
                 ['email' => $u['email']],
                 [
                     'name' => $u['name'],
-                    'password' => Hash::make('password'),
+                    'password' => Hash::make('Qwerty123*'),
                     'role' => $u['role'],
                 ]
             );

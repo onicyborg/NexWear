@@ -12,7 +12,7 @@ class Order extends Model
 {
     use HasFactory, HasUuids, BlameableTrait, SystemLoggable;
 
-    protected $fillable = ['order_no', 'po_number', 'customer_name', 'export_date', 'destination_country', 'ship_mode', 'status', 'created_by', 'updated_by'];
+    protected $fillable = ['order_no', 'po_number', 'customer_id', 'export_date', 'destination_country', 'ship_mode', 'status', 'created_by', 'updated_by'];
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -24,6 +24,11 @@ class Order extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class, 'order_id');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id');
     }
 
     public function productionTrackings()

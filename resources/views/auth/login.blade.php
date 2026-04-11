@@ -4,14 +4,14 @@
 
 <head>
     <base href="{{ asset('') }}" />
-    <title>AviaSync - Login</title>
+    <title>NexWear - Login</title>
     <meta charset="utf-8" />
-    <meta name="description" content="AviaSync - Flight Crew Scheduling System" />
-    <meta name="keywords" content="aviasync, flight, crew, scheduling" />
+    <meta name="description" content="NexWear - Manufacturing Execution System" />
+    <meta name="keywords" content="nexwear, manufacturing, mes, production" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta property="og:locale" content="id_ID" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="AviaSync - Flight Crew Scheduling System" />
+    <meta property="og:title" content="NexWear - Manufacturing Execution System" />
     <link rel="shortcut icon" href="{{ asset('assets/media/logos/favicon.ico') }}" />
 
     <!-- Fonts -->
@@ -79,11 +79,9 @@
                         src="{{ asset('assets/media/auth/agency.png') }}" alt="" />
                     <img class="theme-dark-show mx-auto mw-100 w-150px w-lg-300px mb-10"
                         src="{{ asset('assets/media/auth/agency-dark.png') }}" alt="" />
-
-                    <h1 class="text-gray-800 fs-2qx fw-bold text-center mb-7">AviaSync</h1>
+                    <h1 class="text-gray-800 fs-2qx fw-bold text-center mb-7">Welcome to NexWear</h1>
                     <div class="text-gray-600 fs-base text-center">
-                        Flight Crew Scheduling System<br>
-                        Penjadwalan kru penerbangan yang terintegrasi dan mudah digunakan.
+                        Manufacturing Execution System
                     </div>
                 </div>
                 <!--end::Content-->
@@ -97,17 +95,24 @@
                     <!--begin::Content-->
                     <div class="w-md-400px">
                         <!--begin::Form-->
-                        <form class="form w-100" id="kt_sign_in_form" method="POST" action="{{ route('login.attempt') }}">
+                        <form class="form w-100" id="kt_sign_in_form" method="POST"
+                            action="{{ route('login.attempt') }}">
                             @csrf
 
                             <!--begin::Heading-->
                             <div class="text-center mb-11">
                                 <h1 class="text-gray-900 fw-bolder mb-3">Masuk</h1>
-                                <div class="text-gray-500 fw-semibold fs-6">
-                                    Portal AviaSync
+                                <div class="text-gray-500 fw-semibold fs-6">NexWear — Manufacturing Execution System
                                 </div>
                             </div>
                             <!--end::Heading-->
+
+                            @if ($errors->any())
+                                <div class="alert alert-danger d-flex align-items-center py-2 mb-6" role="alert">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    <div>{{ $errors->first() }}</div>
+                                </div>
+                            @endif
 
                             <!--begin::Input group-->
                             <div class="fv-row mb-8">

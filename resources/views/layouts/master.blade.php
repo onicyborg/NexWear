@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     @hasSection('page_title')
-        <title>AviaSync - @yield('page_title')</title>
+        <title>NexWear - @yield('page_title')</title>
     @else
-        <title>AviaSync - Flight Crew Scheduling System</title>
+        <title>NexWear - Manufacturing Execution System</title>
     @endif
 
     <base href="{{ asset('') }}">
@@ -87,11 +87,22 @@
 
                     <!--begin::Header logo & title-->
                     <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
-                        <a href="{{ auth()->check() ? ((auth()->user()?->role ?? null) === 'crew' ? route('crew.dashboard') : route('admin.dashboard')) : route('login') }}" class="d-flex align-items-center">
+                        @php
+                            $role = auth()->user()?->role;
+                            $roleVal = is_object($role) ? ($role->value ?? null) : $role;
+                            $homeUrl = match ($roleVal) {
+                                'Admin' => url('/admin'),
+                                'Cutting' => url('/cutting'),
+                                'Sewing' => url('/sewing'),
+                                'QC' => url('/qc'),
+                                default => route('login')
+                            };
+                        @endphp
+                        <a href="{{ $homeUrl }}" class="d-flex align-items-center">
                             <img alt="Logo" src="{{ asset('assets/media/logos/default-small.svg') }}"
                                 class="h-30px" />
                             <span class="ms-3 fw-bold fs-4 d-none d-sm-inline text-gray-800">
-                                AviaSync
+                                NexWear
                             </span>
                         </a>
                     </div>
@@ -105,33 +116,46 @@
                             </button>
                         </div>
                         @auth
-                            <div class="d-flex align-items-center">
-                                <a href="{{ route('profile') }}" class="d-flex align-items-center text-decoration-none">
-                                    <div class="d-none d-md-flex flex-column me-3 text-start">
-                                        <span class="fw-semibold text-gray-600 fs-7">Login sebagai</span>
-                                        <span class="fw-bold text-gray-800 fs-6">
-                                            {{ Auth::user()->name ?? 'User' }}
-                                        </span>
-                                        <span class="text-muted fs-8 text-uppercase">
-                                            {{ Auth::user()->role ?? '-' }}
-                                        </span>
+                            <div class="dropdown">
+                                <button class="btn btn-light d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="symbol symbol-35px symbol-circle me-2">
+                                        @php $__photo = Auth::user()->photo ?? null; @endphp
+                                        @if(!empty($__photo))
+                                            <img src="{{ url('storage/profile/' . ltrim($__photo, '/')) }}" alt="avatar" class="h-35px w-35px rounded-circle object-fit-cover" />
+                                        @else
+                                            <span class="symbol-label bg-primary text-white fw-bold">
+                                                {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
+                                            </span>
+                                        @endif
                                     </div>
-
-                                    <div class="symbol symbol-35px symbol-circle">
-                                        <span class="symbol-label bg-primary text-white fw-bold">
-                                            {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
-                                        </span>
+                                    <div class="d-none d-md-flex flex-column text-start me-2">
+                                        <span class="fw-bold text-gray-800 lh-1">{{ Auth::user()->name ?? 'User' }}</span>
+                                        <span class="text-muted fs-8 lh-1">{{ Auth::user()->email ?? '-' }}</span>
                                     </div>
-                                </a>
-
-                                <div class="ms-3">
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-light btn-active-light-primary">
-                                            Logout
-                                        </button>
-                                    </form>
-                                </div>
+                                    <span class="badge bg-light text-dark border">{{ is_object(Auth::user()->role ?? null) ? (Auth::user()->role->value ?? '-') : (Auth::user()->role ?? '-') }}</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow">
+                                    <li class="px-3 py-2">
+                                        <div class="fw-bold">{{ Auth::user()->name ?? 'User' }}</div>
+                                        <div class="text-muted small">{{ Auth::user()->email ?? '-' }}</div>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('profile') }}">
+                                            <i class="bi bi-person-circle"></i>
+                                            <span>Profile</span>
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form action="{{ route('logout') }}" method="POST" class="px-3 py-2">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-light w-100">
+                                                <i class="bi bi-box-arrow-right me-2"></i>Sign Out
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
                             </div>
                         @endauth
                     </div>
@@ -152,10 +176,10 @@
 
                     <!--begin::Sidebar logo-->
                     <div class="app-sidebar-logo px-6" id="kt_app_sidebar_logo">
-                        <a href="{{ auth()->check() ? ((auth()->user()?->role ?? null) === 'crew' ? route('crew.dashboard') : route('admin.dashboard')) : route('login') }}" class="d-flex align-items-center">
+                        <a href="{{ $homeUrl }}" class="d-flex align-items-center">
                             <img alt="Logo" src="{{ asset('assets/media/logos/default-small.svg') }}"
                                 class="h-25px app-sidebar-logo-default" />
-                            <span class="ms-3 fw-semibold text-gray-800 fs-6 sidebar-title">AviaSync</span>
+                            <span class="ms-3 fw-semibold text-gray-800 fs-6 sidebar-title">NexWear</span>
                         </a>
                     </div>
                     <!--end::Sidebar logo-->
@@ -185,7 +209,7 @@
                         id="kt_app_footer">
                         <div class="text-gray-700 order-2 order-md-1 w-100 text-center">
                             <span class="text-muted fw-semibold me-1">© {{ date('Y') }}</span>
-                            <span class="text-gray-600 fw-semibold">AviaSync</span>
+                            <span class="text-gray-600 fw-semibold">NexWear</span>
                         </div>
                     </div>
                     <!--end::Footer-->

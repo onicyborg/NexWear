@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('customers', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('order_no');
-            $table->string('po_number');
-            $table->foreignUuid('customer_id')->constrained('customers')->cascadeOnDelete();
-            $table->date('export_date')->nullable();
-            $table->string('destination_country')->nullable();
-            $table->string('ship_mode')->nullable();
-            $table->string('status')->default('pending'); // pending, on_process_cutting, complete_cutting, dll
+            $table->string('customer_code')->unique();
+            $table->string('name');
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
+            $table->text('address')->nullable();
+            $table->boolean('is_active')->default(true);
 
-            // Audit Trails
+            // Audit trails
             $table->foreignUuid('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignUuid('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('customers');
     }
 };
