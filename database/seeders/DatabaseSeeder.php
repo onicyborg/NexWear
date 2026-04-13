@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\CustomerSeeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\MasterQcKpiSeeder;
+use Database\Seeders\NikeOrderSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,6 +20,7 @@ class DatabaseSeeder extends Seeder
             CustomerSeeder::class,
             UserSeeder::class,
             MasterQcKpiSeeder::class,
+            NikeOrderSeeder::class,
         ]);
     }
 }

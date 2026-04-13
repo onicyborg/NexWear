@@ -7,12 +7,15 @@ use App\Http\Controllers\Cutting\DashboardController as CuttingDashboardControll
 use App\Http\Controllers\Sewing\DashboardController as SewingDashboardController;
 use App\Http\Controllers\QC\DashboardController as QcDashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\MasterQcKpiController;
+use App\Http\Controllers\Admin\OrderController;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.attempt')->middleware('guest');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
@@ -23,6 +26,9 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('admin')->middleware('role:Admin')->group(function () {
         Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+        Route::resource('customers', CustomerController::class)->names('customers');
+        Route::resource('master-qc', MasterQcKpiController::class)->names('master-qc');
+        Route::resource('orders', OrderController::class)->names('orders');
     });
 
     Route::prefix('cutting')->middleware('role:Cutting')->group(function () {

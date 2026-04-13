@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use App\Traits\BlameableTrait;
+use App\Traits\SystemLoggable;
+use App\Models\Order;
 
 class Customer extends Model
 {
-    use HasFactory, HasUuids, BlameableTrait;
+    use HasFactory, HasUuids, BlameableTrait, SystemLoggable;
 
     protected $fillable = [
         'customer_code',

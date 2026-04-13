@@ -25,16 +25,23 @@
                     </div>
 
                     <div class="menu-item">
-                        <a class="menu-link {{ request()->is('admin/po-list*') ? 'active' : '' }}" href="{{ url('/admin/po-list') }}">
-                            <span class="menu-icon"><i class="bi bi-card-list fs-2"></i></span>
-                            <span class="menu-title">PO List</span>
+                        <a class="menu-link {{ request()->is('admin/customers*') ? 'active' : '' }}" href="{{ route('customers.index') }}">
+                            <span class="menu-icon"><i class="bi bi-people fs-2"></i></span>
+                            <span class="menu-title">Customers</span>
                         </a>
                     </div>
 
                     <div class="menu-item">
-                        <a class="menu-link {{ request()->is('admin/master-qc-kpi*') ? 'active' : '' }}" href="{{ url('/admin/master-qc-kpi') }}">
+                        <a class="menu-link {{ request()->is('admin/master-qc*') ? 'active' : '' }}" href="{{ route('master-qc.index') }}">
                             <span class="menu-icon"><i class="bi bi-ui-checks-grid fs-2"></i></span>
                             <span class="menu-title">Master QC KPI</span>
+                        </a>
+                    </div>
+
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->is('admin/orders*') ? 'active' : '' }}" href="{{ route('orders.index') }}">
+                            <span class="menu-icon"><i class="bi bi-card-list fs-2"></i></span>
+                            <span class="menu-title">PO List</span>
                         </a>
                     </div>
 

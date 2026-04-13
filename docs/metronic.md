@@ -85,6 +85,147 @@ Gunakan komponen Bootstrap/Metronic yang konsisten:
 Catatan:
 - Project ini punya script global yang menambahkan `btn-sm` ke `.btn`. Jadi cukup pakai `btn btn-primary` dst.
 
+#### 3.1.1 Basic Card
+
+```html
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h3 class="card-title">Title</h3>
+        <div class="card-toolbar">
+            <button type="button" class="btn btn-sm btn-light">
+                Action
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        Lorem Ipsum is simply dummy text...
+    </div>
+    <div class="card-footer">
+        Footer
+    </div>
+</div>
+```
+
+#### 3.1.2 Card Scroll (Konten dengan tinggi tetap)
+
+```html
+<div class="card bg-light shadow-sm">
+    <div class="card-header">
+        <h3 class="card-title">Title</h3>
+        <div class="card-toolbar">
+            <button type="button" class="btn btn-sm btn-light">
+                Action
+            </button>
+        </div>
+    </div>
+    <div class="card-body card-scroll h-200px">
+        Lorem Ipsum is simply dummy text...
+    </div>
+    <div class="card-footer">
+        Footer
+    </div>
+    </div>
+```
+
+#### 3.1.3 Collapsible Card
+
+```html
+<div class="card shadow-sm">
+    <div class="card-header collapsible cursor-pointer rotate" data-bs-toggle="collapse" data-bs-target="#kt_docs_card_collapsible">
+        <h3 class="card-title">Title</h3>
+        <div class="card-toolbar rotate-180">
+            <i class="ki-duotone ki-down fs-1"></i>
+        </div>
+    </div>
+    <div id="kt_docs_card_collapsible" class="collapse show">
+        <div class="card-body">
+            Lorem Ipsum is simply dummy text...
+        </div>
+        <div class="card-footer">
+            Footer
+        </div>
+    </div>
+</div>
+```
+
+Catatan: pastikan `id` pada target collapse unik di halaman.
+
+#### 3.1.4 Linkable Card
+
+```html
+<a href="#" class="card hover-elevate-up shadow-sm parent-hover">
+    <div class="card-body d-flex align-items">
+        <span class="svg-icon fs-1">...</span>
+        <span class="ms-3 text-gray-700 parent-hover-primary fs-6 fw-bold">
+            Example link title
+        </span>
+    </div>
+</a>
+```
+
+#### 3.1.5 Removable Card
+
+```html
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h3 class="card-title">Title</h3>
+        <div class="card-toolbar">
+            <a href="#" class="btn btn-icon btn-sm btn-active-color-primary" data-kt-card-action="remove" data-kt-card-confirm="true" data-kt-card-confirm-message="Are you sure to remove this card ?" data-bs-toggle="tooltip" title="Remove card" data-bs-dismiss="click">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+            </a>
+        </div>
+    </div>
+    <div class="card-body">...</div>
+</div>
+```
+
+#### 3.1.6 Flush Borders
+
+```html
+<div class="card card-flush shadow-sm">
+    <div class="card-header">
+        <h3 class="card-title">Title</h3>
+        <div class="card-toolbar">
+            <button type="button" class="btn btn-sm btn-light">Action</button>
+        </div>
+    </div>
+    <div class="card-body py-5">
+        Lorem Ipsum is simply dummy text...
+    </div>
+    <div class="card-footer">Footer</div>
+</div>
+```
+
+#### 3.1.7 Bordered Style
+
+```html
+<div class="card card-bordered">
+    <div class="card-header">
+        <h3 class="card-title">Title</h3>
+        <div class="card-toolbar">
+            <button type="button" class="btn btn-sm btn-light">Action</button>
+        </div>
+    </div>
+    <div class="card-body">Lorem Ipsum is simply dummy text...</div>
+    <div class="card-footer">Footer</div>
+</div>
+```
+
+#### 3.1.8 Dashed Style
+
+```html
+<div class="card card-dashed">
+    <div class="card-header">
+        <h3 class="card-title">Title</h3>
+        <div class="card-toolbar">
+            <button type="button" class="btn btn-sm btn-light">Action</button>
+        </div>
+    </div>
+    <div class="card-body">Lorem Ipsum is simply dummy text...</div>
+    <div class="card-footer">Footer</div>
+</div>
+```
+
 ---
 
 ### 3.2 DataTables

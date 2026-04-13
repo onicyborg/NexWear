@@ -15,6 +15,9 @@ class Order extends Model
     protected $fillable = ['order_no', 'po_number', 'customer_id', 'export_date', 'destination_country', 'ship_mode', 'status', 'created_by', 'updated_by'];
     public $incrementing = false;
     protected $keyType = 'string';
+    protected $casts = [
+        'export_date' => 'date',
+    ];
 
     public function createdBy()
     {
