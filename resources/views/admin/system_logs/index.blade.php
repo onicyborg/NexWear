@@ -114,33 +114,33 @@
 @push('scripts')
 <script>
   document.addEventListener('DOMContentLoaded', function(){
-    if (window.jQuery && jQuery.fn && jQuery.fn.DataTable) {
-      jQuery('#system_logs_table').DataTable({ pageLength: 10, ordering: true, order: [[0, 'desc']] });
-    }
-
     function pretty(data){
       try { return JSON.stringify(data, null, 2); } catch(e) { return String(data ?? '-'); }
     }
 
-    document.querySelectorAll('.btnLogDetail').forEach(btn => {
-      btn.addEventListener('click', function(){
+    if (window.jQuery && jQuery.fn && jQuery.fn.DataTable) {
+      const $ = window.jQuery;
+      $('#system_logs_table').DataTable({ pageLength: 10, ordering: true, order: [[0, 'desc']] });
+
+      $('#system_logs_table').on('click', '.btnLogDetail', function(){
+        const $btn = $(this);
         const modalEl = document.getElementById('logDetailModal');
-        document.getElementById('dlg_time').textContent = this.getAttribute('data-time') || '-';
-        document.getElementById('dlg_user').textContent = this.getAttribute('data-user') || '-';
-        document.getElementById('dlg_ip').textContent = this.getAttribute('data-ip') || '-';
+        document.getElementById('dlg_time').textContent = $btn.attr('data-time') || '-';
+        document.getElementById('dlg_user').textContent = $btn.attr('data-user') || '-';
+        document.getElementById('dlg_ip').textContent = $btn.attr('data-ip') || '-';
         (function(){
-          const m = (this.getAttribute('data-method') || '-').toUpperCase();
+          const m = ($btn.attr('data-method') || '-').toUpperCase();
           const map = { GET:'secondary', POST:'primary', PUT:'info', PATCH:'warning', DELETE:'danger' };
           const cls = map[m] || 'secondary';
           document.getElementById('dlg_method').innerHTML = `<span class="badge bg-${cls}">${m}</span>`;
-        }).call(this);
-        document.getElementById('dlg_url').textContent = this.getAttribute('data-url') || '-';
-        document.getElementById('dlg_action').textContent = this.getAttribute('data-action') || '-';
-        document.getElementById('dlg_table').textContent = this.getAttribute('data-table') || '-';
+        })();
+        document.getElementById('dlg_url').textContent = $btn.attr('data-url') || '-';
+        document.getElementById('dlg_action').textContent = $btn.attr('data-action') || '-';
+        document.getElementById('dlg_table').textContent = $btn.attr('data-table') || '-';
 
-        let req = this.getAttribute('data-request');
-        let oldv = this.getAttribute('data-old');
-        let newv = this.getAttribute('data-new');
+        let req = $btn.attr('data-request');
+        let oldv = $btn.attr('data-old');
+        let newv = $btn.attr('data-new');
         try { req = JSON.parse(req); } catch(e) {}
         try { oldv = JSON.parse(oldv); } catch(e) {}
         try { newv = JSON.parse(newv); } catch(e) {}
@@ -152,7 +152,40 @@
         const modal = new bootstrap.Modal(modalEl);
         modal.show();
       });
-    });
+    } else {
+      // Fallback without jQuery/DataTables
+      document.querySelectorAll('.btnLogDetail').forEach(btn => {
+        btn.addEventListener('click', function(){
+          const modalEl = document.getElementById('logDetailModal');
+          document.getElementById('dlg_time').textContent = this.getAttribute('data-time') || '-';
+          document.getElementById('dlg_user').textContent = this.getAttribute('data-user') || '-';
+          document.getElementById('dlg_ip').textContent = this.getAttribute('data-ip') || '-';
+          (function(){
+            const m = (this.getAttribute('data-method') || '-').toUpperCase();
+            const map = { GET:'secondary', POST:'primary', PUT:'info', PATCH:'warning', DELETE:'danger' };
+            const cls = map[m] || 'secondary';
+            document.getElementById('dlg_method').innerHTML = `<span class=\"badge bg-${cls}\">${m}</span>`;
+          }).call(this);
+          document.getElementById('dlg_url').textContent = this.getAttribute('data-url') || '-';
+          document.getElementById('dlg_action').textContent = this.getAttribute('data-action') || '-';
+          document.getElementById('dlg_table').textContent = this.getAttribute('data-table') || '-';
+
+          let req = this.getAttribute('data-request');
+          let oldv = this.getAttribute('data-old');
+          let newv = this.getAttribute('data-new');
+          try { req = JSON.parse(req); } catch(e) {}
+          try { oldv = JSON.parse(oldv); } catch(e) {}
+          try { newv = JSON.parse(newv); } catch(e) {}
+
+          document.getElementById('dlg_request').textContent = pretty(req);
+          document.getElementById('dlg_old').textContent = pretty(oldv);
+          document.getElementById('dlg_new').textContent = pretty(newv);
+
+          const modal = new bootstrap.Modal(modalEl);
+          modal.show();
+        });
+      });
+    }
   });
 </script>
 @endpush
