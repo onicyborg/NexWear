@@ -32,14 +32,14 @@ cp .env.example .env
 
 4. Set konfigurasi database di `.env`
 
-Contoh (PostgreSQL):
+Contoh (MySQL):
 
 ```env
-DB_CONNECTION=pgsql
+DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
-DB_PORT=5432
+DB_PORT=3306
 DB_DATABASE=nexwear
-DB_USERNAME=postgres
+DB_USERNAME=root
 DB_PASSWORD=
 ```
 
