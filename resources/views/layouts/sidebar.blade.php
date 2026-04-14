@@ -82,8 +82,15 @@
                 @elseif ($role === UserRole::Sewing)
                     <div class="menu-item">
                         <a class="menu-link {{ request()->routeIs('sewing.dashboard') ? 'active' : '' }}" href="{{ route('sewing.dashboard') }}">
-                            <span class="menu-icon"><i class="bi bi-threads fs-2"></i></span>
+                            <span class="menu-icon"><i class="bi bi-tools fs-2"></i></span>
                             <span class="menu-title">Antrian Sewing</span>
+                        </a>
+                    </div>
+
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->routeIs('sewing.history') ? 'active' : '' }}" href="{{ route('sewing.history') }}">
+                            <span class="menu-icon"><i class="bi bi-clock-history fs-2"></i></span>
+                            <span class="menu-title">Riwayat Sewing</span>
                         </a>
                     </div>
 

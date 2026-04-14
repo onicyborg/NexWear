@@ -44,6 +44,9 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('sewing')->middleware('role:Sewing')->group(function () {
         Route::get('/', [SewingDashboardController::class, 'index'])->name('sewing.dashboard');
+        Route::post('/start/{order}', [SewingDashboardController::class, 'startProcess'])->name('sewing.start');
+        Route::post('/complete/{order}', [SewingDashboardController::class, 'completeProcess'])->name('sewing.complete');
+        Route::get('/history', [SewingDashboardController::class, 'history'])->name('sewing.history');
     });
 
     Route::prefix('qc')->middleware('role:QC')->group(function () {
