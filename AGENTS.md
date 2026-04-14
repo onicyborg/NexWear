@@ -10,7 +10,6 @@ Target utama:
 - Menjaga konsistensi **kontrol akses** (statis berbasis role atau dinamis berbasis permission/policy) sesuai strategi yang dipilih proyek.
 
 ---
-
 ## Daftar Isi
 
 - [0) Ringkasan Tech Stack & UI Kit (Laravel 10)](#0-ringkasan-tech-stack--ui-kit-laravel-10)
@@ -20,6 +19,7 @@ Target utama:
   - [1.3 Pola Data Display: DataTables](#13-pola-data-display-datatables)
   - [1.4 Komponen UI Kustom / Kompleks](#14-komponen-ui-kustom--kompleks)
 - [2) Penanganan JavaScript & AJAX](#2-penanganan-javascript--ajax)
+  - [2.5 Tips Blade & JSON pada Atribut HTML](#25-tips-blade--json-pada-atribut-html)
 - [3) Notifikasi UI](#3-notifikasi-ui)
 - [4) Kontrol Akses](#4-kontrol-akses-general)
   - [4.1 Kontrol Akses Statis (Role Tetap)](#41-kontrol-akses-statis-role-tetap)
@@ -88,6 +88,7 @@ Tambahan aturan konsistensi proyek (wajib):
   - Tombol aksi utama di kanan.
 - **Gunakan komponen Metronic/Bootstrap**:
   - `card`, `card-body`, `table-responsive`, `btn btn-primary`, dll.
+- **Satu section konten per file**: Pastikan hanya ada satu pasangan `@section('content') ... @endsection` dalam setiap view. Hindari menutup section dua kali.
 
 Contoh pola header:
 ```blade
@@ -212,6 +213,28 @@ $(document).ready(function() {
 Standar default: CRUD master data dilakukan via submit form normal (bukan AJAX). Setelah submit, halaman redirect dan tabel tampil ulang.
 
 ---
+
+### 1.3.3 Event Aksi pada Tabel (Wajib Delegated untuk DataTables)
+
+Karena DataTables melakukan re-render DOM saat pagination/sort/search, binding event langsung ke tombol dengan `querySelectorAll(...).addEventListener(...)` akan tidak bekerja di halaman 2 dst. Gunakan delegated event pada elemen tabel (jQuery) agar tetap berfungsi.
+
+Snippet (jQuery, disarankan):
+```js
+// Pastikan inisialisasi DataTables lebih dulu
+const dt = $('#<resource>_table').DataTable({ pageLength: 10, ordering: true });
+
+// Delegated handler untuk tombol Edit
+$('#<resource>_table').on('click', '.btnEdit<Resource>', function(){
+  // ... isi form modal edit dari data-attribute tombol ini
+});
+
+// Delegated handler untuk tombol Delete
+$('#<resource>_table').on('click', '.btnDelete<Resource>', function(){
+  // ... konfirmasi hapus dan submit form hidden
+});
+```
+
+Fallback tanpa jQuery (bila tidak memakai DataTables): gunakan `addEventListener` biasa atau manual re-bind setelah konten berubah. Namun untuk halaman standar dengan DataTables, pakai pola delegated di atas.
 
 ## 1.4 Komponen UI Kustom / Kompleks
 
@@ -390,6 +413,31 @@ modal.addEventListener('show.bs.modal', function (event) {
 **Aturan:**
 - Untuk modal detail/read-only, **boleh** fetch on-open dan render HTML template string.
 - Pastikan escape minimal untuk konten raw (contoh: `.replace(/</g,'&lt;')`).
+
+---
+
+## 2.5 Tips Blade & JSON pada Atribut HTML
+
+Untuk menyisipkan data kompleks ke atribut `data-*` (mis. list item), hindari pola yang memicu error parser Blade.
+
+Aturan:
+- Gunakan `->toJson()` pada koleksi/array, dan bungkus atribut dengan tanda kutip ganda HTML.
+- Hindari arrow function `fn($it) => [...]` di dalam `@json(...)` pada atribut, karena raw bracket/parenthesis dapat mengacaukan parser. Gunakan closure klasik.
+
+Snippet aman:
+```blade
+<button
+  data-items="{{ $order->orderItems->map(function($it){ return [
+    'color_code' => $it->color_code,
+    'color_name' => $it->color_name,
+    'size' => $it->size,
+    'quantity' => $it->quantity,
+  ]; })->values()->toJson() }}">
+```
+
+Catatan:
+- Selalu pakai kutip ganda (`"..."`) pada atribut HTML saat menyisipkan JSON (yang juga memakai kutip ganda di dalamnya).
+- Bila butuh `@json(...)`, gunakan pada konten script/JS, bukan di dalam atribut kompleks.
 
 ---
 
