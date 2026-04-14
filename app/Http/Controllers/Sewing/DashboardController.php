@@ -22,7 +22,7 @@ class DashboardController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        return view('sewing.index', compact('pendingOrders', 'inProgressOrders'));
+        return view('sewing.dashboard', compact('pendingOrders', 'inProgressOrders'));
     }
 
     public function startProcess(Order $order): RedirectResponse
