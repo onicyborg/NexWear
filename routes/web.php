@@ -37,6 +37,8 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('cutting')->middleware('role:Cutting')->group(function () {
         Route::get('/', [CuttingDashboardController::class, 'index'])->name('cutting.dashboard');
+        Route::post('/start/{order}', [CuttingDashboardController::class, 'startProcess'])->name('cutting.start');
+        Route::post('/complete/{order}', [CuttingDashboardController::class, 'completeProcess'])->name('cutting.complete');
     });
 
     Route::prefix('sewing')->middleware('role:Sewing')->group(function () {
