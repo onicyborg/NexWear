@@ -97,7 +97,6 @@
       </div>
     </div>
   </div>
-@endsection
 
 @push('scripts')
 <script>
@@ -123,3 +122,47 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 @endpush
+
+@php
+    // helper to method badge class in blade
+    function _method_badge_cls($m){
+        $m = strtoupper((string)$m);
+        return [ 'GET'=>'secondary','POST'=>'primary','PUT'=>'info','PATCH'=>'warning','DELETE'=>'danger'][$m] ?? 'secondary';
+    }
+@endphp
+  <div class="row g-5 mb-5">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <h3 class="card-title">Aktivitas Terbaru</h3>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-middle table-row-dashed fs-6 gy-5">
+              <thead>
+                <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                  <th>Time</th>
+                  <th>User</th>
+                  <th>Method</th>
+                  <th>URL</th>
+                </tr>
+              </thead>
+              <tbody class="fw-semibold text-gray-600">
+                @forelse(($latestLogs ?? []) as $l)
+                <tr>
+                  <td>{{ $l->created_at?->format('d M Y H:i:s') }}</td>
+                  <td>{{ $l->user?->name ?? '-' }}</td>
+                  <td><span class="badge bg-{{ _method_badge_cls($l->method) }}">{{ strtoupper($l->method ?? '-') }}</span></td>
+                  <td style="max-width: 420px;" title="{{ $l->url }}"><div class="text-truncate">{{ $l->url }}</div></td>
+                </tr>
+                @empty
+                <tr><td colspan="4" class="text-center text-muted">Belum ada aktivitas</td></tr>
+                @endforelse
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+@endsection

@@ -13,6 +13,11 @@ class SystemLog extends Model
     protected $fillable = ['user_id', 'action', 'table_name', 'record_id', 'old_values', 'new_values', 'method', 'url', 'request_payload', 'ip_address'];
     public $incrementing = false;
     protected $keyType = 'string';
+    protected $casts = [
+        'old_values' => 'array',
+        'new_values' => 'array',
+        'request_payload' => 'array',
+    ];
 
     public function user()
     {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Customer;
 use App\Models\ProductionTracking;
+use App\Models\SystemLog;
 use Illuminate\Support\Carbon;
 
 class DashboardController extends Controller
@@ -61,6 +62,8 @@ class DashboardController extends Controller
                 return $o;
             });
 
+        $latestLogs = SystemLog::with('user')->orderByDesc('created_at')->limit(10)->get();
+
         return view('admin.dashboard', [
             'stats' => [
                 'totalActivePo' => $totalActivePo,
@@ -78,6 +81,7 @@ class DashboardController extends Controller
                 ],
             ],
             'urgentOrders' => $urgentOrders,
+            'latestLogs' => $latestLogs,
         ]);
     }
 }

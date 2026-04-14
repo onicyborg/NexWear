@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\MasterQcKpiController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\SystemLogController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -29,6 +30,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('customers', CustomerController::class)->names('customers');
         Route::resource('master-qc', MasterQcKpiController::class)->names('master-qc');
         Route::resource('orders', OrderController::class)->names('orders');
+        Route::get('system-logs', [SystemLogController::class, 'index'])->name('system-logs.index');
     });
 
     Route::prefix('cutting')->middleware('role:Cutting')->group(function () {

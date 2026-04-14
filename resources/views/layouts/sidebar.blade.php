@@ -45,6 +45,18 @@
                         </a>
                     </div>
 
+                    <div class="menu-content">
+                        <div class="separator my-3"></div>
+                        <span class="menu-heading text-uppercase text-muted fs-8">System</span>
+                    </div>
+
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->is('admin/system-logs*') ? 'active' : '' }}" href="{{ route('system-logs.index') }}">
+                            <span class="menu-icon"><i class="bi bi-activity fs-2"></i></span>
+                            <span class="menu-title">System Logs</span>
+                        </a>
+                    </div>
+
                 @elseif ($role === UserRole::Cutting)
                     <div class="menu-item">
                         <a class="menu-link {{ request()->routeIs('cutting.dashboard') ? 'active' : '' }}" href="{{ route('cutting.dashboard') }}">
