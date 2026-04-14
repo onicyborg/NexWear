@@ -215,8 +215,8 @@
             addItemRow({});
         });
 
-        document.querySelectorAll('.btnEditOrder').forEach(btn => {
-            btn.addEventListener('click', function(){
+        if (window.jQuery) {
+            $('#orders_table').on('click', '.btnEditOrder', function(){
                 clearValidation(orderForm);
                 const id = this.getAttribute('data-id');
                 orderForm.action = @json(route('orders.update', '__ID__')).replace('__ID__', id);
@@ -241,10 +241,34 @@
                 const modal = new bootstrap.Modal(orderModalEl);
                 modal.show();
             });
-        });
+        } else {
+            document.querySelectorAll('.btnEditOrder').forEach(btn => {
+                btn.addEventListener('click', function(){
+                    clearValidation(orderForm);
+                    const id = this.getAttribute('data-id');
+                    orderForm.action = @json(route('orders.update', '__ID__')).replace('__ID__', id);
+                    orderFormMethod.value = 'PUT';
+                    formMode.value = 'edit';
+                    orderModalTitle.textContent = 'Edit Order';
+                    orderId.value = id;
+                    fCustomer.value = this.getAttribute('data-customer_id') || '';
+                    fExportDate.value = this.getAttribute('data-export_date') || '';
+                    fDest.value = this.getAttribute('data-destination_country') || '';
+                    fShip.value = this.getAttribute('data-ship_mode') || '';
+                    itemsTbody.innerHTML = '';
+                    try {
+                        const items = JSON.parse(this.getAttribute('data-items') || '[]');
+                        if (Array.isArray(items) && items.length) { items.forEach(it => addItemRow(it)); }
+                        else { addItemRow({}); }
+                    } catch(e){ addItemRow({}); }
+                    const modal = new bootstrap.Modal(orderModalEl);
+                    modal.show();
+                });
+            });
+        }
 
-        document.querySelectorAll('.btnDeleteOrder').forEach(btn => {
-            btn.addEventListener('click', function(){
+        if (window.jQuery) {
+            $('#orders_table').on('click', '.btnDeleteOrder', function(){
                 const id = this.getAttribute('data-id');
                 const no = this.getAttribute('data-no');
                 Swal.fire({
@@ -262,7 +286,28 @@
                     }
                 });
             });
-        });
+        } else {
+            document.querySelectorAll('.btnDeleteOrder').forEach(btn => {
+                btn.addEventListener('click', function(){
+                    const id = this.getAttribute('data-id');
+                    const no = this.getAttribute('data-no');
+                    Swal.fire({
+                        title: 'Hapus Order?',
+                        text: `Yakin ingin menghapus ${no}?`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, hapus',
+                        cancelButtonText: 'Batal'
+                    }).then((res) => {
+                        if (res.isConfirmed) {
+                            const form = document.getElementById('deleteOrderForm');
+                            form.action = @json(route('orders.destroy', '__ID__')).replace('__ID__', id);
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        }
 
         @if (session('success'))
         Swal.fire({ icon: 'success', title: 'Berhasil', text: @json(session('success')), timer: 1800, showConfirmButton: false });

@@ -218,18 +218,26 @@
             // Add button
             document.getElementById('btnAddCustomer')?.addEventListener('click', function(){ setCreateMode(); });
 
-            // Edit buttons
-            document.querySelectorAll('.btnEditCustomer').forEach(btn => {
-                btn.addEventListener('click', function(){
+            // Edit (delegated)
+            if (window.jQuery) {
+                $('#customers_table').on('click', '.btnEditCustomer', function(){
                     setEditMode(this);
                     const modal = bootstrap.Modal.getOrCreateInstance(customerModal);
                     modal.show();
                 });
-            });
+            } else {
+                document.querySelectorAll('.btnEditCustomer').forEach(btn => {
+                    btn.addEventListener('click', function(){
+                        setEditMode(this);
+                        const modal = bootstrap.Modal.getOrCreateInstance(customerModal);
+                        modal.show();
+                    });
+                });
+            }
 
-            // Delete
-            document.querySelectorAll('.btnDeleteCustomer').forEach(btn => {
-                btn.addEventListener('click', function(){
+            // Delete (delegated)
+            if (window.jQuery) {
+                $('#customers_table').on('click', '.btnDeleteCustomer', function(){
                     const id = this.getAttribute('data-id');
                     const name = this.getAttribute('data-name');
                     Swal.fire({
@@ -247,7 +255,28 @@
                         }
                     });
                 });
-            });
+            } else {
+                document.querySelectorAll('.btnDeleteCustomer').forEach(btn => {
+                    btn.addEventListener('click', function(){
+                        const id = this.getAttribute('data-id');
+                        const name = this.getAttribute('data-name');
+                        Swal.fire({
+                            title: 'Hapus Customer?',
+                            text: `Yakin ingin menghapus ${name}?`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Ya, hapus',
+                            cancelButtonText: 'Batal'
+                        }).then((res) => {
+                            if (res.isConfirmed) {
+                                const form = document.getElementById('deleteCustomerForm');
+                                form.action = @json(route('customers.destroy', '__ID__')).replace('__ID__', id);
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+            }
 
             if (table) {
                 $.fn.dataTable.ext.search.push(function (settings, data) {

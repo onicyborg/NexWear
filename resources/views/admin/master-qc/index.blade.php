@@ -158,9 +158,9 @@
                 document.getElementById('kpi_is_active').checked = true;
             });
 
-            // Edit
-            document.querySelectorAll('.btnEditKpi').forEach(btn => {
-                btn.addEventListener('click', function(){
+            // Edit (delegated)
+            if (window.jQuery) {
+                $('#kpi_table').on('click', '.btnEditKpi', function(){
                     const id = this.getAttribute('data-id');
                     const cat = this.getAttribute('data-category') || '';
                     const ins = this.getAttribute('data-instruction') || '';
@@ -178,11 +178,31 @@
                     const modal = new bootstrap.Modal(document.getElementById('kpiModal'));
                     modal.show();
                 });
-            });
+            } else {
+                document.querySelectorAll('.btnEditKpi').forEach(btn => {
+                    btn.addEventListener('click', function(){
+                        const id = this.getAttribute('data-id');
+                        const cat = this.getAttribute('data-category') || '';
+                        const ins = this.getAttribute('data-instruction') || '';
+                        const act = this.getAttribute('data-active') === '1';
+                        const f = document.getElementById('kpiForm');
+                        f.action = @json(route('master-qc.update', '__ID__')).replace('__ID__', id);
+                        document.getElementById('kpiFormMethod').value = 'PUT';
+                        document.getElementById('form_mode').value = 'edit';
+                        document.getElementById('kpiModalTitle').textContent = 'Edit KPI';
+                        document.getElementById('kpi_id').value = id;
+                        document.getElementById('kpi_category').value = cat;
+                        document.getElementById('kpi_instruction').value = ins;
+                        document.getElementById('kpi_is_active').checked = act;
+                        const modal = new bootstrap.Modal(document.getElementById('kpiModal'));
+                        modal.show();
+                    });
+                });
+            }
 
-            // Delete
-            document.querySelectorAll('.btnDeleteKpi').forEach(btn => {
-                btn.addEventListener('click', function(){
+            // Delete (delegated)
+            if (window.jQuery) {
+                $('#kpi_table').on('click', '.btnDeleteKpi', function(){
                     const id = this.getAttribute('data-id');
                     const name = this.getAttribute('data-name');
                     Swal.fire({
@@ -200,7 +220,28 @@
                         }
                     });
                 });
-            });
+            } else {
+                document.querySelectorAll('.btnDeleteKpi').forEach(btn => {
+                    btn.addEventListener('click', function(){
+                        const id = this.getAttribute('data-id');
+                        const name = this.getAttribute('data-name');
+                        Swal.fire({
+                            title: 'Hapus KPI?',
+                            text: `Yakin ingin menghapus ${name}?`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Ya, hapus',
+                            cancelButtonText: 'Batal'
+                        }).then((res) => {
+                            if (res.isConfirmed) {
+                                const form = document.getElementById('deleteKpiForm');
+                                form.action = @json(route('master-qc.destroy', '__ID__')).replace('__ID__', id);
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+            }
 
             // Flash notifications
             @if (session('success'))
