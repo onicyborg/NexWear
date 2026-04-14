@@ -97,8 +97,22 @@
                 @elseif ($role === UserRole::QC)
                     <div class="menu-item">
                         <a class="menu-link {{ request()->routeIs('qc.dashboard') ? 'active' : '' }}" href="{{ route('qc.dashboard') }}">
+                            <span class="menu-icon"><i class="bi bi-speedometer2 fs-2"></i></span>
+                            <span class="menu-title">Dashboard QC</span>
+                        </a>
+                    </div>
+
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->routeIs('qc.queue') ? 'active' : '' }}" href="{{ route('qc.queue') }}">
                             <span class="menu-icon"><i class="bi bi-clipboard-check fs-2"></i></span>
-                            <span class="menu-title">Checklist QC</span>
+                            <span class="menu-title">Antrian Inspeksi</span>
+                        </a>
+                    </div>
+
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->routeIs('qc.history') ? 'active' : '' }}" href="{{ route('qc.history') }}">
+                            <span class="menu-icon"><i class="bi bi-clock-history fs-2"></i></span>
+                            <span class="menu-title">Riwayat QC</span>
                         </a>
                     </div>
                 @endif

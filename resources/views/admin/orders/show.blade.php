@@ -111,7 +111,7 @@
                                         <div class="flex-grow-1">
                                             <div class="d-flex align-items-center mb-1">
                                                 <span class="fw-bold {{ $titleCls }}">{{ $s['label'] }}</span>
-                                                @if($trk?->completed_at)
+                                                @if($state === 'done')
                                                     <span class="badge bg-success ms-2">Selesai</span>
                                                 @elseif($state === 'active')
                                                     <span class="badge bg-primary ms-2">Berjalan</span>

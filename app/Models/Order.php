@@ -43,4 +43,9 @@ class Order extends Model
     {
         return $this->hasMany(OrderQcChecklist::class, 'order_id');
     }
+
+    public function qcSummary()
+    {
+        return $this->hasOne(OrderQcSummary::class, 'order_id');
+    }
 }

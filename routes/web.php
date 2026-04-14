@@ -50,6 +50,10 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('qc')->middleware('role:QC')->group(function () {
-        Route::get('/', [QcDashboardController::class, 'index'])->name('qc.dashboard');
+        Route::get('/', [QcDashboardController::class, 'dashboard'])->name('qc.dashboard');
+        Route::get('/queue', [QcDashboardController::class, 'index'])->name('qc.queue');
+        Route::get('/history', [QcDashboardController::class, 'history'])->name('qc.history');
+        Route::get('/inspect/{order}', [QcDashboardController::class, 'inspect'])->name('qc.inspect');
+        Route::post('/submit/{order}', [QcDashboardController::class, 'submit'])->name('qc.submit');
     });
 });

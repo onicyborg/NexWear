@@ -12,12 +12,12 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $pendingOrders = Order::with(['customer', 'orderItems'])
-            ->whereIn('status', ['complete_cutting', 'waiting_sewing'])
+        $pendingOrders = Order::with(['customer', 'orderItems', 'qcSummary'])
+            ->whereIn('status', ['complete_cutting', 'waiting_sewing', 'rework_sewing'])
             ->orderByDesc('created_at')
             ->get();
 
-        $inProgressOrders = Order::with(['customer', 'orderItems'])
+        $inProgressOrders = Order::with(['customer', 'orderItems', 'qcSummary'])
             ->where('status', 'on_process_sewing')
             ->orderByDesc('created_at')
             ->get();

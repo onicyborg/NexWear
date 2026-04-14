@@ -124,6 +124,8 @@ class OrderController extends Controller
             $state = 'pending';
             if ($trk) {
                 $state = $trk->completed_at ? 'done' : 'active';
+            } elseif ($step['key'] === 'completed') {
+                $state = strtolower((string) $order->status) === 'completed' ? 'done' : 'pending';
             } elseif ($step['key'] === 'pending') {
                 // If no tracking yet, initial state is active pending
                 $state = count($order->productionTrackings) ? 'done' : 'active';

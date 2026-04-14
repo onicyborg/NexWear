@@ -33,18 +33,27 @@
                 @else
                     <div id="kanban_pending" class="d-flex flex-column gap-4">
                         @foreach($pendingOrders as $order)
+                            @php
+                                $ship = strtoupper(trim((string)($order->ship_mode ?? '-')));
+                                $isRework = (strtolower((string)$order->status) === 'rework_sewing') || ((int)($order->qcSummary->qty_rework ?? 0) > 0);
+                                $reworkQty = (int)($order->qcSummary->qty_rework ?? 0);
+                            @endphp
                             <div class="card border-gray-200 shadow-sm kanban-item"
                                  data-po="{{ strtolower($order->po_number ?? '') }}"
                                  data-customer="{{ strtolower($order->customer->name ?? '') }}"
                                  data-date="{{ optional($order->export_date)->toDateString() }}"
-                                 data-ship="{{ strtoupper(trim((string)($order->ship_mode ?? ''))) }}">
-                                <div class="card-header d-flex justify-content-between align-items-center py-3">
+                                 data-ship="{{ $ship }}">
+                                <div class="card-header d-flex justify-content-between align-items-start py-3">
                                     <div>
-                                        <div class="fw-bold">PO: {{ $order->po_number ?? '-' }}</div>
+                                        <div class="fw-bold d-flex align-items-center gap-2">
+                                            <span>PO: {{ $order->po_number ?? '-' }}</span>
+                                            @if($isRework)
+                                                <span class="badge bg-danger fs-6 fw-bold">⚠️ REWORK: {{ $reworkQty }} pcs</span>
+                                            @endif
+                                        </div>
                                         <div class="text-muted small">Customer: {{ $order->customer->name ?? '-' }}</div>
                                     </div>
-                                    <div>
-                                        @php $ship = strtoupper(trim((string)($order->ship_mode ?? '-'))); @endphp
+                                    <div class="text-end d-flex flex-column gap-2 align-items-end">
                                         <span class="badge {{ in_array($ship, ['AIR','NOTS']) ? 'bg-danger' : 'bg-info' }}">{{ $ship ?: '-' }}</span>
                                     </div>
                                 </div>
@@ -53,6 +62,12 @@
                                         <div class="text-muted">Export Date</div>
                                         <div class="fw-semibold">{{ optional($order->export_date)->format('d M Y') ?? '-' }}</div>
                                     </div>
+                                    @if($isRework && !empty($order->qcSummary->general_notes))
+                                        <div class="mt-3">
+                                            <div class="text-muted">Catatan Rework</div>
+                                            <div class="fw-semibold">{{ $order->qcSummary->general_notes }}</div>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="card-footer d-flex justify-content-between align-items-center gap-2 py-3">
                                     @php
@@ -81,7 +96,7 @@
                                     <form method="POST" action="{{ route('sewing.start', $order->id) }}" class="ms-auto form-start">
                                         @csrf
                                         <button type="submit" class="btn btn-primary">
-                                            Mulai Jahit
+                                            Mulai Proses Sewing
                                         </button>
                                     </form>
                                 </div>
@@ -104,18 +119,27 @@
                 @else
                     <div id="kanban_inprogress" class="d-flex flex-column gap-4">
                         @foreach($inProgressOrders as $order)
+                            @php
+                                $ship = strtoupper(trim((string)($order->ship_mode ?? '-')));
+                                $isRework = (strtolower((string)$order->status) === 'rework_sewing') || ((int)($order->qcSummary->qty_rework ?? 0) > 0);
+                                $reworkQty = (int)($order->qcSummary->qty_rework ?? 0);
+                            @endphp
                             <div class="card border-gray-200 shadow-sm kanban-item"
                                  data-po="{{ strtolower($order->po_number ?? '') }}"
                                  data-customer="{{ strtolower($order->customer->name ?? '') }}"
                                  data-date="{{ optional($order->export_date)->toDateString() }}"
-                                 data-ship="{{ strtoupper(trim((string)($order->ship_mode ?? ''))) }}">
-                                <div class="card-header d-flex justify-content-between align-items-center py-3">
+                                 data-ship="{{ $ship }}">
+                                <div class="card-header d-flex justify-content-between align-items-start py-3">
                                     <div>
-                                        <div class="fw-bold">PO: {{ $order->po_number ?? '-' }}</div>
+        							<div class="fw-bold d-flex align-items-center gap-2">
+                                            <span>PO: {{ $order->po_number ?? '-' }}</span>
+                                            @if($isRework)
+                                                <span class="badge bg-danger fs-6 fw-bold">⚠️ REWORK: {{ $reworkQty }} pcs</span>
+                                            @endif
+                                        </div>
                                         <div class="text-muted small">Customer: {{ $order->customer->name ?? '-' }}</div>
                                     </div>
-                                    <div>
-                                        @php $ship = strtoupper(trim((string)($order->ship_mode ?? '-'))); @endphp
+                                    <div class="text-end d-flex flex-column gap-2 align-items-end">
                                         <span class="badge {{ in_array($ship, ['AIR','NOTS']) ? 'bg-danger' : 'bg-info' }}">{{ $ship ?: '-' }}</span>
                                     </div>
                                 </div>
@@ -124,6 +148,12 @@
                                         <div class="text-muted">Export Date</div>
                                         <div class="fw-semibold">{{ optional($order->export_date)->format('d M Y') ?? '-' }}</div>
                                     </div>
+                                    @if($isRework && !empty($order->qcSummary->general_notes))
+                                        <div class="mt-3">
+                                            <div class="text-muted">Catatan Rework</div>
+                                            <div class="fw-semibold">{{ $order->qcSummary->general_notes }}</div>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="card-footer d-flex justify-content-between align-items-center gap-2 py-3">
                                     @php
@@ -152,7 +182,7 @@
                                     <form method="POST" action="{{ route('sewing.complete', $order->id) }}" class="ms-auto form-complete">
                                         @csrf
                                         <button type="submit" class="btn btn-success btn-complete">
-                                            Selesai Jahit
+                                            Selesaikan Proses Sewing
                                         </button>
                                     </form>
                                 </div>
