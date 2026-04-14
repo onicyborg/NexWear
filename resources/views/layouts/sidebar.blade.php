@@ -72,6 +72,13 @@
                         </a>
                     </div>
 
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->routeIs('cutting.history') ? 'active' : '' }}" href="{{ route('cutting.history') }}">
+                            <span class="menu-icon"><i class="bi bi-clock-history fs-2"></i></span>
+                            <span class="menu-title">Riwayat Cutting</span>
+                        </a>
+                    </div>
+
                 @elseif ($role === UserRole::Sewing)
                     <div class="menu-item">
                         <a class="menu-link {{ request()->routeIs('sewing.dashboard') ? 'active' : '' }}" href="{{ route('sewing.dashboard') }}">

@@ -51,4 +51,24 @@ class DashboardController extends Controller
 
         return back()->with('success', 'Proses cutting selesai untuk PO ' . ($order->po_number ?? $order->order_no));
     }
+
+    public function history()
+    {
+        $historyOrders = Order::with([
+                'customer',
+                'orderItems',
+                'productionTrackings' => function ($q) {
+                    $q->where('status', 'cutting')
+                      ->whereNotNull('completed_at')
+                      ->orderByDesc('started_at');
+                }
+            ])
+            ->whereHas('productionTrackings', function ($q) {
+                $q->where('status', 'cutting')->whereNotNull('completed_at');
+            })
+            ->orderByDesc('export_date')
+            ->get();
+
+        return view('cutting.history', compact('historyOrders'));
+    }
 }
