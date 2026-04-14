@@ -2,7 +2,21 @@
 
 @section('page_title', 'Manage Users')
 
+@php
+    $userAvatarPlaceholder = 'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><circle cx="60" cy="60" r="60" fill="#eff2f5"/><circle cx="60" cy="44" r="24" fill="#c7d2fe"/><path d="M20 110c6-26 32-32 40-32s34 6 40 32" fill="#a5b4fc"/></svg>');
+@endphp
+
 @push('styles')
+    <style>
+        .crew-avatar-input .image-input-wrapper {
+            border: 1px dashed var(--bs-gray-400);
+            background-size: cover;
+            background-position: center;
+        }
+        [data-bs-theme="dark"] .crew-avatar-input .image-input-wrapper {
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -33,6 +47,7 @@
                 <table class="table align-middle table-row-dashed fs-6 gy-5" id="users_table">
                     <thead>
                         <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                            <th>Foto</th>
                             <th>Nama</th>
                             <th>Email</th>
                             <th>Role</th>
@@ -45,8 +60,22 @@
                                 $roleName = is_object($user->role ?? null) ? ($user->role->name ?? (string)($user->role)) : (string)($user->role ?? '');
                                 $roleMap = ['Admin' => 'primary', 'Cutting' => 'info', 'Sewing' => 'warning', 'QC' => 'success'];
                                 $roleColor = $roleMap[$roleName] ?? 'secondary';
+
+                                $photoPath = trim((string) ($user->photo ?? ''));
+                                $photoPath = ltrim($photoPath, '/');
+                                $photoPath = preg_replace('/^storage\//', '', $photoPath);
+                                $photoUrl = !empty($photoPath) ? url('storage/' . $photoPath) : null;
                             @endphp
                             <tr>
+                                <td>
+                                    <div class="symbol symbol-45px symbol-circle">
+                                        @if(!empty($photoUrl))
+                                            <img alt="{{ $user->name }}" src="{{ $photoUrl }}" class="object-fit-cover" />
+                                        @else
+                                            <img alt="{{ $user->name }}" src="{{ $userAvatarPlaceholder }}" class="object-fit-cover" />
+                                        @endif
+                                    </div>
+                                </td>
                                 <td class="text-gray-800 fw-bold">{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td><span class="badge badge-light-{{ $roleColor }}">{{ $roleName ?: '-' }}</span></td>
@@ -59,7 +88,8 @@
                                         data-id="{{ $user->id }}"
                                         data-name="{{ $user->name }}"
                                         data-email="{{ $user->email }}"
-                                        data-role="{{ $roleName }}">
+                                        data-role="{{ $roleName }}"
+                                        data-photo_url="{{ $photoUrl }}">
                                         <i class="bi bi-pencil-square me-1"></i>Edit
                                     </button>
                                     <button type="button" class="btn btn-danger btn-sm"
@@ -80,7 +110,7 @@
     <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form id="userForm" method="POST" action="{{ route('users.store') }}">
+                <form id="userForm" method="POST" action="{{ route('users.store') }}" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="_method" id="userFormMethod" value="POST">
 
@@ -92,6 +122,21 @@
                     </div>
 
                     <div class="modal-body">
+                        <div class="mb-5">
+                            <label class="form-label">Foto Profil</label>
+                            <div class="image-input image-input-circle crew-avatar-input" data-kt-image-input="true" id="user_photo_container">
+                                <div id="user_photo_wrapper" class="image-input-wrapper w-125px h-125px"
+                                     style="background-image: url('{{ $userAvatarPlaceholder }}');"></div>
+                                <label class="btn btn-icon btn-circle btn-active-color-primary w-30px h-30px bg-body shadow"
+                                       data-kt-image-input-action="change" data-bs-toggle="tooltip" aria-label="Ganti foto">
+                                    <i class="bi bi-pencil-fill fs-7"></i>
+                                    <input type="file" name="photo" id="user_photo" accept=".png, .jpg, .jpeg, .webp" />
+                                    <input type="hidden" name="avatar_remove" />
+                                </label>
+                            </div>
+                            <div class="text-muted fs-8 mt-2">Format: png/jpg/jpeg/webp. Maks: 2MB.</div>
+                        </div>
+
                         <div class="row g-5">
                             <div class="col-md-6">
                                 <label class="form-label">Nama</label>
@@ -201,7 +246,17 @@
                 var fEmail = document.getElementById('user_email');
                 var fPassword = document.getElementById('user_password');
                 var fRole = document.getElementById('user_role');
-                var fActive = document.getElementById('user_active');
+                var fPhoto = document.getElementById('user_photo');
+
+                var userPhotoPlaceholder = @json($userAvatarPlaceholder);
+                function setUserPhoto(url) {
+                    var wrapper = document.getElementById('user_photo_wrapper');
+                    var container = document.getElementById('user_photo_container');
+                    if (!wrapper) return;
+                    var finalUrl = url || userPhotoPlaceholder;
+                    wrapper.style.backgroundImage = "url('" + finalUrl + "')";
+                    container && container.classList.toggle('has-photo', Boolean(url));
+                }
 
                 // Add New
                 document.getElementById('btnAddUser')?.addEventListener('click', function(){
@@ -213,7 +268,8 @@
                     fEmail && (fEmail.value = '');
                     fPassword && (fPassword.value = '');
                     fRole && (fRole.selectedIndex = 0);
-                    fActive && (fActive.value = '1');
+                    fPhoto && (fPhoto.value = '');
+                    setUserPhoto(null);
                 });
 
                 // Edit (delegated for DataTables)
@@ -230,7 +286,9 @@
                         if (fRole) {
                             Array.from(fRole.options).forEach(function(opt){ opt.selected = (opt.value == roleVal || opt.text == roleVal); });
                         }
-                        fActive && (fActive.value = this.getAttribute('data-active') === '0' ? '0' : '1');
+                        var p = this.getAttribute('data-photo_url') || '';
+                        fPhoto && (fPhoto.value = '');
+                        setUserPhoto(p || null);
                     });
                 } else {
                     document.querySelectorAll('.btnEditUser').forEach(function(btn){
@@ -246,10 +304,23 @@
                             if (fRole) {
                                 Array.from(fRole.options).forEach(function(opt){ opt.selected = (opt.value == roleVal || opt.text == roleVal); });
                             }
-                            fActive && (fActive.value = this.getAttribute('data-active') === '0' ? '0' : '1');
+                            var p = this.getAttribute('data-photo_url') || '';
+                            fPhoto && (fPhoto.value = '');
+                            setUserPhoto(p || null);
                         });
                     });
                 }
+
+                // Preview on change
+                fPhoto && fPhoto.addEventListener('change', function(){
+                    var f = fPhoto.files && fPhoto.files[0];
+                    if (!f) return;
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        setUserPhoto(e.target && e.target.result ? e.target.result : null);
+                    };
+                    reader.readAsDataURL(f);
+                });
 
                 // Delete modal
                 var deleteModalEl = document.getElementById('confirmDeleteModal');

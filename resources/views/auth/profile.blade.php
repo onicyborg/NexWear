@@ -37,7 +37,7 @@
                         $photoPath = trim((string) ($user->photo ?? ''));
                         $photoPath = ltrim($photoPath, '/');
                         $photoPath = preg_replace('/^storage\//', '', $photoPath);
-                        $photoUrl = !empty($photoPath) ? url('storage/profile/' . $photoPath) : null;
+                        $photoUrl = !empty($photoPath) ? url('storage/' . $photoPath) : null;
                     @endphp
                     <div class="image-input image-input-outline" data-kt-image-input="true" style="background-image: url('{{ $fallbackAvatar }}')">
                         <div class="image-input-wrapper w-150px h-150px" style="background-image: url('{{ $photoUrl ?? $fallbackAvatar }}');"></div>

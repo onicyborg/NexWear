@@ -121,7 +121,7 @@
                                     <div class="symbol symbol-35px symbol-circle me-2">
                                         @php $__photo = Auth::user()->photo ?? null; @endphp
                                         @if(!empty($__photo))
-                                            <img src="{{ url('storage/profile/' . ltrim($__photo, '/')) }}" alt="avatar" class="h-35px w-35px rounded-circle object-fit-cover" />
+                                            <img src="{{ url('storage/' . ltrim($__photo, '/')) }}" alt="avatar" class="h-35px w-35px rounded-circle object-fit-cover" />
                                         @else
                                             <span class="symbol-label bg-primary text-white fw-bold">
                                                 {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}

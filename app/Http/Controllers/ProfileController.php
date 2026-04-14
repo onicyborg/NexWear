@@ -31,11 +31,10 @@ class ProfileController extends Controller
         if ($request->hasFile('photo')) {
             // delete old photo if exists
             if (!empty($user->photo)) {
-                Storage::disk('public')->delete('profile/' . ltrim($user->photo, '/'));
+                Storage::disk('public')->delete($user->photo);
             }
-            $name = $request->file('photo')->hashName();
-            $request->file('photo')->storeAs('public/profile', $name);
-            $user->photo = $name; // store only filename, view composes storage/profile/<name>
+            $path = $request->file('photo')->store('profile', 'public');
+            $user->photo = $path; // store relative path like 'profile/<hashname>'
         }
 
         $user->name = $validated['name'];

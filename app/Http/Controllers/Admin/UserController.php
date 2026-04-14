@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -22,6 +23,7 @@ class UserController extends Controller
             'email' => ['required','email','max:150','unique:users,email'],
             'role' => ['required','string','in:Admin,Cutting,Sewing,QC'],
             'password' => ['required','string','min:8'],
+            'photo' => ['nullable','image','mimes:jpg,jpeg,png,webp','max:2048'],
         ]);
 
         $data = [
@@ -30,6 +32,11 @@ class UserController extends Controller
             'role' => $validated['role'],
             'password' => Hash::make($validated['password']),
         ];
+
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('profile', 'public');
+            $data['photo'] = $path;
+        }
 
         User::create($data);
 
@@ -45,6 +52,7 @@ class UserController extends Controller
             'email' => ['required','email','max:150','unique:users,email,' . $user->id],
             'role' => ['required','string','in:Admin,Cutting,Sewing,QC'],
             'password' => ['nullable','string','min:8'],
+            'photo' => ['nullable','image','mimes:jpg,jpeg,png,webp','max:2048'],
         ]);
 
         $data = [
@@ -57,6 +65,15 @@ class UserController extends Controller
             $data['password'] = Hash::make($validated['password']);
         }
 
+        // Handle photo replace
+        if ($request->hasFile('photo')) {
+            if (!empty($user->photo)) {
+                Storage::disk('public')->delete($user->photo);
+            }
+            $path = $request->file('photo')->store('profile', 'public');
+            $data['photo'] = $path;
+        }
+
         $user->update($data);
 
         return redirect()->route('users.index')->with('success', 'User berhasil diperbarui');
@@ -65,6 +82,9 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         $user = User::findOrFail($id);
+        if (!empty($user->photo)) {
+            Storage::disk('public')->delete($user->photo);
+        }
         $user->delete();
         return redirect()->route('users.index')->with('success', 'User berhasil dihapus');
     }
