@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\MasterQcKpiController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SystemLogController;
+use App\Http\Controllers\Admin\UserController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -30,6 +31,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('customers', CustomerController::class)->names('customers');
         Route::resource('master-qc', MasterQcKpiController::class)->names('master-qc');
         Route::resource('orders', OrderController::class)->names('orders');
+        Route::resource('users', UserController::class)->names('users');
         Route::get('system-logs', [SystemLogController::class, 'index'])->name('system-logs.index');
     });
 

@@ -25,6 +25,13 @@
                     </div>
 
                     <div class="menu-item">
+                        <a class="menu-link {{ request()->is('admin/users*') ? 'active' : '' }}" href="{{ route('users.index') }}">
+                            <span class="menu-icon"><i class="bi bi-person-gear fs-2"></i></span>
+                            <span class="menu-title">Users</span>
+                        </a>
+                    </div>
+
+                    <div class="menu-item">
                         <a class="menu-link {{ request()->is('admin/customers*') ? 'active' : '' }}" href="{{ route('customers.index') }}">
                             <span class="menu-icon"><i class="bi bi-people fs-2"></i></span>
                             <span class="menu-title">Customers</span>
