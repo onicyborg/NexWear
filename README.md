@@ -14,7 +14,7 @@ NexWear adalah aplikasi internal untuk manajemen proses produksi (Cutting, Sewin
 1. Clone repository
 
 ```bash
-git clone <REPO_URL>
+git clone https://github.com/onicyborg/NexWear.git
 cd NexWear
 ```
 
